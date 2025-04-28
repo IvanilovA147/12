@@ -1,35 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+    // Створюємо константу для збереження списку питань
+    const [questions, setQuestions] = useState([]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    // Використовуємо useEffect для отримання даних з сервера
+    useEffect(() => {
+        fetch('http://127.0.0.1:8000/polls/api/questions/')  // Запит до серверу за вказаним URL
+            .then(res => res.json())  // Перетворюємо відповідь у формат JSON
+            .then(data => setQuestions(data));  // Зберігаємо отримані дані в state
+    }, []);  // Пустий масив означає, що цей ефект буде виконано тільки один раз при монтуванні компонента
+
+    return (
+        <div>
+            {/* Виводимо кожне питання */}
+            {questions.map(question => (
+                <div key={question.id}>
+                    <h1>{question.question_text}</h1>
+                    <p>{question.pub_date}</p>
+                </div>
+            ))}
+        </div>
+    );
 }
 
-export default App
+export default App;
